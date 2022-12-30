@@ -221,3 +221,6 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 ```
+
+**後續針對OrderProcessor的類別進行測試，以保護因後續需求情境改變，增加Unit Test**
+
