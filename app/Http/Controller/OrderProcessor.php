@@ -1,7 +1,7 @@
 <?php
 
 class OrderProcessor {
-    public function __construct(BillerInterface $biller, OrderRepositoriy $orders, array $validates)
+    public function __construct(BillerInterface $biller, OrderRepositoriy $orders, array $validates = [])
     {
         $this->biller = $biller;
         $this->orders = $orders;
@@ -10,7 +10,7 @@ class OrderProcessor {
 
     public function process(Order $order)
     {
-        
+
         foreach ($this->validates as $validate) {
             $validate->validate($order);
         }
