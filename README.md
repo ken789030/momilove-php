@@ -3,8 +3,9 @@
 ## 針對以下範例程式，協助 Code Review 下訂單功能
 **表達出「高內聚、低耦合、職責分離」的程式架構**
 
-```php=
+```php
 <?php
+
 class OrderProcessor {
     public function __construct(BillerInterface $biller)
     {
