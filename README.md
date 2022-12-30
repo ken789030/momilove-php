@@ -105,3 +105,86 @@ class OrderProcessor {
 
 }
 ```
+
+**依照上方判斷訂單是否有重複，此驗證後續有任何變動或新加入驗證方法的話，我們需要額外新增驗證方法，導致違反開放封閉原則，
+對程式碼開放擴充，但對修改是封閉的，因此我們將驗證的部分提領出來，先將驗證方法使用Interface來做接口**
+
+```php
+<?php
+
+interface OrderVaildatorInterface
+{
+    public function validator(Order $order);
+}
+```
+
+**實作class RecentOrderValidator 來實現驗證部分**
+
+```php
+<?php
+
+class RecentOrderValidator implements OrderVaildatorInterface
+{
+    public function __construct(OrderRepositoriy $orders)
+    {
+        $this->orders = $orders;
+    }
+
+    public function validator(Order $order)
+    {
+        $recent = $this->orders->getRecentOrderCount($order);
+        if ($recent > 0)
+        {
+            throw new Exception('Duplicate order likely.');
+        }
+    }
+}
+
+```
+
+**這時候我們實作一個驗證訂單是否超出訂購金額**
+
+```php
+<?php
+
+class OrderOverflowValidator implements OrderVaildatorInterface
+{
+ 
+
+    public function validator(Order $order)
+    {
+        if ($this->order->amount->isOverflow())
+        {
+            throw new Exception('The Order amount is overflow.');
+        }
+    }
+}
+```
+
+**這時候將OrderProcess的類別注入驗證部分，因此注入驗證方法可以為多種驗證器，以下為更改過後的程式碼**
+
+```php
+<?php
+
+class OrderProcessor {
+    public function __construct(BillerInterface $biller, OrderRepositoriy $orders, array $validates)
+    {
+        $this->biller = $biller;
+        $this->orders = $orders;
+        $this->validates = $validates;
+    }
+
+    public function process(Order $order)
+    {
+        
+        foreach ($this->validates as $validate) {
+            $validate->validate($order);
+        }
+
+        $this->biller->bill($order->account->id, $order->amount);
+
+        $this->orders->createOrder($order);
+    }
+
+}
+```
