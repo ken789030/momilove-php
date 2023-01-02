@@ -1,7 +1,10 @@
 <?php
 
+namespace app\Controllers;
+
+
 class OrderProcessor {
-    public function __construct(BillerInterface $biller, OrderRepositoriy $orders, array $validates = [])
+    public function __construct(BillerInterface $biller, OrderRepository $orders, array $validates = [])
     {
         $this->biller = $biller;
         $this->orders = $orders;
