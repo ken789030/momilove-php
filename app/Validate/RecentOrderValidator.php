@@ -10,8 +10,7 @@ class RecentOrderValidator implements OrderVaildatorInterface
     public function validator(Order $order)
     {
         $recent = $this->orders->getRecentOrderCount($order);
-        if ($recent > 0)
-        {
+        if ($recent > 0) {
             throw new Exception('Duplicate order likely.');
         }
     }
